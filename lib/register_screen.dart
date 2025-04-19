@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'rooms_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -13,6 +15,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
   final passController = TextEditingController();
   final confirmPassController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final roleController = TextEditingController();
 
   Future<void> register() async {
     if (passController.text.trim() != confirmPassController.text.trim()) {
@@ -23,10 +28,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // Create Firebase Auth account
+      final result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passController.text.trim(),
       );
+
+      // Add user profile to Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(result.user!.uid)
+          .set({
+            'firstName': firstNameController.text.trim(),
+            'lastName': lastNameController.text.trim(),
+            'role': roleController.text.trim(),
+            'email': result.user!.email,
+            'registeredAt': FieldValue.serverTimestamp(),
+          });
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const RoomsScreen()),
@@ -42,10 +61,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Register')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            TextField(
+              controller: firstNameController,
+              decoration: const InputDecoration(labelText: 'First Name'),
+            ),
+            TextField(
+              controller: lastNameController,
+              decoration: const InputDecoration(labelText: 'Last Name'),
+            ),
+            TextField(
+              controller: roleController,
+              decoration: const InputDecoration(
+                labelText: 'Role (e.g., student, admin)',
+              ),
+            ),
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),

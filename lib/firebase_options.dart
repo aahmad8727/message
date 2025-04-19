@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'message-e2996.firebasestorage.app',
     measurementId: 'G-JXX6DJ2M6G',
   );
+
 }
