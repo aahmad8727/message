@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'chat_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ChatboardsApp());
 }
 
@@ -13,7 +19,7 @@ class ChatboardsApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chatboards',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const RoomsScreen(),
+      home: const LoginScreen(),
     );
   }
 }

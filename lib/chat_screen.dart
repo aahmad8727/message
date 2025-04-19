@@ -17,7 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void sendMessage() {
-    final user = _auth.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     if (user != null && _controller.text.trim().isNotEmpty) {
       _firestore
           .collection('chatrooms')
